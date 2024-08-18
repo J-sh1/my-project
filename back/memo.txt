@@ -1,0 +1,3 @@
+가상환경 접속 명령어
+cd back
+venv\Scripts\activate
