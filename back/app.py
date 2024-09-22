@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
@@ -9,6 +9,7 @@ from routes.user import user_bp
 load_dotenv()
 
 app = Flask(__name__)
+
 # 환경변수에서 CORS 허용 출처 가져오기
 CORS_ORIGIN = os.getenv('CORS_ORIGIN', '*')
 
@@ -20,4 +21,4 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.register_blueprint(user_bp)
 
 if __name__ == '__main__':
-    app.run(port = 5000, debug=True)
+    app.run(port=5000, debug=True)
