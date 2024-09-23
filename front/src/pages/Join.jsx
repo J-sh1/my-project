@@ -1,32 +1,54 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react'
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { Link } from 'react-router-dom';
+import axios from 'axios'
 
 const Join = () => {
 
     const [pwck, setPwck] = useState(false)
-    const [id, setId] = useState()
-    const [pw, setPw] = useState()
-    const [name, setName] = useState()
-    const [gender, setGender] = useState()
-    const [number, setNumber] = useState()
+    const [id, setId] = useState('')
+    const [pw, setPw] = useState('')
+    const [name, setName] = useState('')
+    const [gender, setGender] = useState('')
+    const [number, setNumber] = useState('')
+    const [csrfToken, setCsrfToken] = useState('')
   
     const joinData = async (e) => {
-      e.preventDefault()
-      console.log('데이터전송')
-    //   const res = await instance.post('/joinData', {
-    //     id: id,
-    //     pw: pw,
-    //     name: name,
-    //     gender: gender,
-    //     number: number
-    //   })
-    //   if (res.data.result === 'success') {
-    //     alert('회원가입 완료')
-    //     window.location.href = '/'
-    //   }
+      e.preventDefault();
+      try {
+        console.log('데이터 전송 중...');
+        const res = await axios.post('/join_user', {
+          user_id: id,
+          user_pw: pw,
+          user_name: name,
+          user_gender: gender,
+          user_number: number
+        }, {
+          headers: {
+            'X-CSRFToken': csrfToken  // CSRF 토큰을 헤더에 포함
+          }
+        })
+        if (res.data.message === '회원가입 성공') {
+          alert('회원가입 완료');
+          window.location.href = '/';
+        } else {
+          alert('회원가입 실패');
+        }
+      } catch (error) {
+        console.error('회원가입 에러:', error);
+        alert('서버 오류 발생. 다시 시도해주세요.');
+      }
     }
+    
+    useEffect(() => {
+      // 페이지 로드 시 CSRF 토큰을 가져옴
+      const fetchCsrfToken = async () => {
+          const response = await axios.get('/get-csrf-token');
+          setCsrfToken(response.data.csrf_token);
+      };
+      fetchCsrfToken();
+  }, []);
   
     return (
       <div>
