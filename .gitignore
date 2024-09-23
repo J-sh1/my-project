@@ -26,3 +26,4 @@ yarn-error.log*
 venv
 back/.env
 back/memo.txt
+back/sessions/

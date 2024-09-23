@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 import os
 from flask_session import Session
 from config.session import SessionConfig
-from flask_wtf.csrf import CSRFProtect, generate_csrf
+from flask_wtf.csrf import CSRFProtect
 
 # 다른 모듈에서 블루프린트 가져오기
 from routes.user_route import user_bp
@@ -32,11 +32,6 @@ CSRFProtect(app)
 app.register_blueprint(user_bp)
 app.register_blueprint(csrf_bp)
 
-@app.route('/')
-def test():
-    print('접속')
-    return 'w접속'
-
 @app.errorhandler(404)
 def page_not_found(e):
     return jsonify({'error': 'Page not found'}), 404
@@ -45,11 +40,6 @@ def page_not_found(e):
 def internal_server_error(e):
     return jsonify({'error': 'Internal server error'}), 500
 
-@app.route('/get-csrf-token', methods=['GET'])
-def get_csrf_token():
-    response = make_response(jsonify({"message": "CSRF token sent"}))
-    response.set_cookie('csrf_token', generate_csrf())  # CSRF 토큰을 쿠키에 저장
-    return response
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
