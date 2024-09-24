@@ -64,6 +64,8 @@ const Login = ({csrfToken}) => {
       <Link to="/join">
         <button type="button">회원가입</button>
       </Link>
+      <br/>
+      <img src="https://developers.kakao.com/tool/resource/static/img/button/login/full/ko/kakao_login_medium_narrow.png" alt="" />
     </div>
   )
 }
