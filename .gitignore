@@ -27,3 +27,5 @@ venv
 back/.env
 back/memo.txt
 back/sessions/
+back/sessions
+sessions
