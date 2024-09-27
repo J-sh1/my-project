@@ -1,0 +1,18 @@
+.main-content{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 두 개의 열 */
+    grid-template-rows: repeat(2, 1fr); /* 두 개의 행 */
+    gap: 10px; /* 박스들 사이의 간격 */
+    width: 80vw; /* 전체 너비의 80% */
+    height: 80vh; /* 전체 높이의 80% */
+    margin: 0 auto; /* 중앙 정렬 */
+    background-color: #f0f0f0; /* 배경색 */
+}
+.main-container-box {
+    background-color: red;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem; /* 텍스트 크기 */
+    color: white;
+  }
