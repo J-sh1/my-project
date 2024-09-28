@@ -1,18 +1,36 @@
-.main-content{
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 두 개의 열 */
-    grid-template-rows: repeat(2, 1fr); /* 두 개의 행 */
-    gap: 10px; /* 박스들 사이의 간격 */
-    width: 80vw; /* 전체 너비의 80% */
-    height: 80vh; /* 전체 높이의 80% */
-    margin: 0 auto; /* 중앙 정렬 */
-    background-color: #f0f0f0; /* 배경색 */
+.main-container{
+    min-height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
 }
-.main-container-box {
-    background-color: red;
+
+.main-container > div {
+    display: flex; 
+    flex-basis: calc(50% - 40px);  
+    justify-content: center;
+    flex-direction: column;
+}
+
+.main-container > div > div {
     display: flex;
     justify-content: center;
-    align-items: center;
-    font-size: 2rem; /* 텍스트 크기 */
-    color: white;
-  }
+    flex-direction: row;
+}
+
+.main-container > div > div:nth-child(2) {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    border-bottom: 0.5px solid black; /* 밑줄 추가 */
+    margin-left: 1vw;
+    margin-right: 1vw;
+}
+
+.main-container-box {
+    margin: 20px;
+}
+.box1 { background-color: red; }
+.box2 { background-color: orange; }
+.box3 { background-color: purple; }
+.box4 { background-color: grey; }
