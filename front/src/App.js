@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import Join from './pages/Join';
 import { useEffect, useState } from 'react';
 import instance from './config/axios'
+import PostList from './pages/PostList';
 
 function App() {
 
@@ -40,6 +41,7 @@ function App() {
         <Route path='/' element = {<Home/>}/>
         <Route path='/login' element = {<Login csrfToken={csrfToken}/>} />
         <Route path='/join' element = {<Join csrfToken={csrfToken}/>} />
+        <Route path='/postlist/:category' element = {<PostList csrfToken = {csrfToken}/>} />
       </Routes>
     </div>
   );

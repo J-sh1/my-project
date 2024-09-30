@@ -1,35 +1,35 @@
-.main-container{
+.main-container {
     min-height: 100%;
     display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-}
-
-.main-container > div {
-    display: flex; 
-    flex-basis: calc(50% - 40px);  
-    justify-content: center;
-    flex-direction: column;
-}
-
-.main-container > div > div {
-    display: flex;
-    justify-content: center;
-    flex-direction: row;
-}
-
-.main-container > div > div:nth-child(2) {
-    display: flex;
-    justify-content: center;
-    flex-direction: row;
-    border-bottom: 0.5px solid black; /* 밑줄 추가 */
-    margin-left: 1vw;
-    margin-right: 1vw;
+    flex-wrap: wrap;  /* 한 줄에 2개씩 배치하고 줄이 넘어갈 경우 다음 줄로 */
+    justify-content: center;  /* 중앙 정렬 */
+    margin-top: 10vh;
+    margin-left: 15vw;
+    margin-right: 15vw;
 }
 
 .main-container-box {
+    flex-basis: calc(50% - 40px);  /* 한 줄에 2개의 박스를 배치하기 위한 설정 */
     margin: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
+
+.content-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+.main-container-plus {
+    display: flex;
+    justify-content: flex-end;  /* "더보기"를 오른쪽으로 */
+    width: 100%;
+    box-sizing: border-box;  /* 패딩, 마진을 포함한 박스 크기 조정 */
+}
+
+/* 박스별 색상 */
 .box1 { background-color: red; }
 .box2 { background-color: orange; }
 .box3 { background-color: purple; }

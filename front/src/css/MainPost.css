@@ -1,0 +1,86 @@
+.main-container {
+    display: flex;
+    flex-wrap: wrap; /* 한 줄에 두 개씩 배치하고 넘칠 경우 다음 줄로 이동 */
+    justify-content: space-between;
+    margin-top: 10vh;
+    margin-left: 15vw;
+    margin-right: 15vw;
+}
+
+.main-container > div {
+    display: flex; 
+    flex-basis: calc(50% - 40px);  
+    justify-content: center;
+    flex-direction: column;
+}
+
+.main-container > div > div {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+}
+.main-container > div div:nth-child(1) {
+    display: flex;
+    justify-content: flex-end; /* 오른쪽 끝에 배치 */
+    width: 100%; /* 가로 공간 전체를 차지하도록 설정 */
+    font-size: 0.5vw;
+}
+
+.main-container > div > div:nth-child(2) {
+    display: flex;
+    justify-content: space-between; /* 항목들을 양쪽 끝으로 배치 */
+    flex-direction: row;
+    border-bottom: 0.5px solid black; /* 밑줄 추가 */
+    margin-left: 1vw;
+    margin-right: 1vw;
+    padding: 10px;
+}
+
+.main-container > div > div:nth-child(2) span:nth-child(1) {
+    flex: 1; /* 분류 영역을 작게 설정 */
+    text-align: left; /* 왼쪽 끝에 붙이기 */
+}
+
+.main-container > div > div:nth-child(2) span:nth-child(2) {
+    flex: 3; /* 제목 영역을 크게 설정 */
+    text-align: center; /* 가운데 정렬 */
+}
+
+.main-container > div > div:nth-child(2) span:nth-child(3) {
+    flex: 1; /* 추천수 영역을 작게 설정 */
+    text-align: right; /* 오른쪽 끝에 붙이기 */
+}
+
+.content-row span:nth-child(1) {
+    flex: 0.5; /* 분류 영역을 작게 설정 */
+    text-align: left; /* 왼쪽 끝에 붙이기 */
+    margin-left: 1vw;
+    margin-right: 1vw;
+    margin-top: 0.3vw;
+}
+.content-row a:nth-child(2) {
+    flex: 6; /* 제목 영역을 크게 설정 */
+    text-align: left; /* 가운데 정렬 */
+    margin-top: 0.3vw;
+}
+.content-row span:nth-child(3) {
+    flex: 0.5; /* 추천수 영역을 작게 설정 */
+    text-align: right; /* 오른쪽 끝에 붙이기 */
+    margin-left: 5vw;
+    margin-right: 1.5vw;
+    margin-top: 0.3vw;
+}
+
+.main-container-box {
+    margin: 20px;
+}
+
+.main-container-box a {
+    display: block;
+    text-align: right; /* 더보기를 오른쪽 끝에 배치 */
+    margin-right: 10px; /* 오른쪽에 약간의 여백 추가 */
+}
+/* 
+.box2 { background-color: orange; }
+.box3 { background-color: purple; }
+.box4 { background-color: grey; } */
