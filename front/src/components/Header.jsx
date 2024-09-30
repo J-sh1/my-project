@@ -5,10 +5,10 @@ const Header = () => {
   return (
     <div>
       <div className="">
-        <Link to={'/'}>
+        <Link to={'/join'}>
             <span className='nav-free-post'>회원가입</span>
         </Link>
-        <Link to={'/'}>
+        <Link to={'/login'}>
             <span className='nav-free-post'>로그인</span>
         </Link>
         <Link to={'/'}>

@@ -36,8 +36,8 @@ async def main() :
 
 # 로그인
 @router.post("/login_user")
-async def login(request: Request):
-    data = await request.json()  # JSON 데이터 파싱
+async def login(req: Request):
+    data = await req.json()  # JSON 데이터 파싱
     user_id = data.get('user_id')
     user_pw = data.get('user_pw')
 
@@ -52,8 +52,8 @@ async def login(request: Request):
 
             if result and check_password(user_pw, result[0]):
                 # 세션 설정 (쿠키 기반 세션 처리)
-                request.session['user_id'] = user_id
-                request.session['user_idx'] = result[1]
+                req.session['user_id'] = user_id
+                req.session['user_idx'] = result[1]
                 return JSONResponse(content={'message': '로그인 성공'}, status_code=200)
             else:
                 raise HTTPException(status_code=401, detail="로그인 실패")
@@ -64,8 +64,8 @@ async def login(request: Request):
 
 # 회원가입
 @router.post("/join_user")
-async def join_user(request: Request):
-    data = await request.json()  # JSON 데이터 파싱
+async def join_user(req: Request):
+    data = await req.json()  # JSON 데이터 파싱
     user_id = data.get('user_id')
     user_pw = hash_password(data.get('user_pw'))  # 비밀번호 해싱
     user_name = data.get('user_name')
@@ -92,11 +92,38 @@ async def join_user(request: Request):
         except Exception as e:
             db.rollback()
             print(f"Error: {str(e)}")
+            raise HTTPException(status_code = 400, detail = str(e))
+
+# 아이디 중복 확인
+@router.post('/idcheck')
+async def idcheck(req: Request):
+    data = await req.json()
+    user_id = data.get('user_id')
+    
+    with get_db_cursor() as (db, cursor):
+        try:
+            sql = """
+            SELECT COUNT(*)
+            FROM USER_INFO
+            WHERE USER_ID = %s
+            """
+            
+            cursor.execute(sql, (user_id,))
+            result = cursor.fetchone()
+            
+            if result[0] > 0:
+                message = '불가능'  # ID가 이미 존재하므로 사용 불가능
+            else:
+                message = '사용가능'  # ID가 없으므로 사용 가능
+            
+            return JSONResponse(content={'message': message})
+        except Exception as e:
             raise HTTPException(status_code=400, detail=str(e))
+
 
 # 로그아웃
 @router.post("/logout")
-async def logout(request: Request):
-    request.session.pop('user_id', None)
-    request.session.pop('user_idx', None)
+async def logout(req: Request):
+    req.session.pop('user_id', None)
+    req.session.pop('user_idx', None)
     return JSONResponse(content={'message': '로그아웃 성공'}, status_code=200)
