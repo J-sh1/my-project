@@ -11,7 +11,8 @@ const Join = ({csrfToken}) => {
   const [name, setName] = useState('')
   const [gender, setGender] = useState('')
   const [number, setNumber] = useState('')
-
+  const [idbutton, setIdbutton] = useState(true)
+  const [idck, setIdck] = useState(false)
 
   // // 쿠키에서 CSRF 토큰을 가져오는 함수
   // const getCsrfTokenFromCookies = () => {
@@ -48,13 +49,34 @@ const Join = ({csrfToken}) => {
     }
   }
 
+  /** 중복확인 체크 함수 (아이디) */
+  const idcheck = async (e) => {
+    // console.log(id)
+    if (id.length > 0) {
+      setIdbutton(false)
+      const data = {
+        user_id : id
+      }
+      
+      const res = await instance.post('/idcheck', data)
+      if (res.data.message === '불가능') { 
+        setIdck(false)
+      } else if (res.data.message === '사용가능') {
+        setIdck(true)
+      }
+    } 
+  }
+
   return (
     <div>
       <form onSubmit={joinData}>
         <div className="">
           <Link to='/'>메인</Link>
           <div className="">
-            아이디<br /><input type="text" autoFocus placeholder="아이디" onChange={(e) => { setId(e.target.value) }} /><br />
+            아이디<br /><input type="text" autoFocus placeholder="아이디" onChange={(e) => { setId(e.target.value) }} />
+            <button type='button' onClick={() => {idcheck(id)}}>중복확인</button>
+            {idbutton ? <span></span> : idck ? <span style={{color:'blue'}}>사용가능</span> : <span style={{color:'red'}}>불가능</span>}
+            <br />
             <div className="">
               비밀번호<br /><input type={!pwck ? 'password' : 'text'} placeholder="비밀번호" onChange={(e) => { setPw(e.target.value) }} />
               <button type='button' onClick={() => { setPwck(!pwck) }} tabIndex={-1}>

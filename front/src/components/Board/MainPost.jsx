@@ -4,7 +4,7 @@ import '../../css/MainPost.css'
 import BoardItem from './BoardItem'
 
 /*
-다음 할 일 : 게시판 리스트 컴포넌트 분리, 링크연결
+db랑 게시판목록 연동
 */
 
 const MainPost = ({ num, category }) => {
