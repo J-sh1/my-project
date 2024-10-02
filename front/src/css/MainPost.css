@@ -50,9 +50,13 @@
     flex: 1; /* 추천수 영역을 작게 설정 */
     text-align: right; /* 오른쪽 끝에 붙이기 */
 }
+.content-row {
+    display: flex;
+    align-items: center; /* 자식 요소 수직 가운데 정렬 */
+}
 
 .content-row span:nth-child(1) {
-    flex: 0.5; /* 분류 영역을 작게 설정 */
+    flex: 0.7; /* 분류 영역을 작게 설정 */
     text-align: left; /* 왼쪽 끝에 붙이기 */
     margin-left: 1vw;
     margin-right: 1vw;
@@ -64,9 +68,9 @@
     margin-top: 0.3vw;
 }
 .content-row span:nth-child(3) {
-    flex: 0.5; /* 추천수 영역을 작게 설정 */
+    flex: 1.8; /* 추천수 영역을 작게 설정 */
     text-align: right; /* 오른쪽 끝에 붙이기 */
-    margin-left: 5vw;
+    
     margin-right: 1.5vw;
     margin-top: 0.3vw;
 }

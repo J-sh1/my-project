@@ -7,7 +7,10 @@ import BoardItem from './BoardItem'
 db랑 게시판목록 연동
 */
 
-const MainPost = ({ num, category }) => {
+const MainPost = ({ num, category, board = [] }) => {
+
+    console.log('baord', board)
+    
     return (
         <div className={`main-container-box box${num}`}>
             <div className='main-container-plus'>
@@ -16,18 +19,16 @@ const MainPost = ({ num, category }) => {
             <div>
                 <span>분류</span>
                 <span>제목</span>
-                <span>추천수</span>
+                <span>{category == 'news' ? '날짜' : '추천수'}</span>
             </div>
             <div></div> {/* 밑줄 */}
-            <BoardItem category ={category}/>
-            <BoardItem category ={category}/>
-            <BoardItem category ={category}/>
-            <BoardItem category ={category}/>
-            <BoardItem category ={category}/>
-            <BoardItem category ={category}/>
-            <BoardItem category ={category}/>
-            <BoardItem category ={category}/>
-
+            {board.length > 0 ? (
+                    board.map((item, index) => (
+                        <BoardItem key={index} category={category} link = {item.link} title={item.title} date={item.date} />
+                    ))
+                ) : (
+                    <p>게시글이 없습니다.</p>
+                )}
         </div>
     )
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-const BoardItem = ({category}) => {
+const BoardItem = ({category, title, date, link}) => {
 
     const [board, setBoard] = useState('')
 
@@ -20,8 +20,8 @@ const BoardItem = ({category}) => {
   return (
     <div className="content-row">
         <span>{board}</span>
-        <Link to = {'/login'}>게시판테스트1</Link>
-        <span>10</span>
+        <Link to = {link} target="_blank">{title}</Link>
+        <span>{date}</span>
     </div>
   )
 }

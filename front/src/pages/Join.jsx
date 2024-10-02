@@ -12,19 +12,18 @@ const Join = ({csrfToken}) => {
   const [gender, setGender] = useState('')
   const [number, setNumber] = useState('')
   const [idbutton, setIdbutton] = useState(true)
-  const [idck, setIdck] = useState(false)
-
-  // // 쿠키에서 CSRF 토큰을 가져오는 함수
-  // const getCsrfTokenFromCookies = () => {
-  //     const csrfCookie = document.cookie
-  //         .split('; ')
-  //         .find(row => row.startsWith('csrf_token='))
-  //     return csrfCookie ? csrfCookie.split('=')[1] : ''
-  // };
+  const [idck, setIdck] = useState(false) // 아이디 중복 체크 여부 상태값
 
   // 회원가입 데이터 전송
   const joinData = async (e) => {
     e.preventDefault();
+
+    // 아이디 중복확인이 완료되지 않으면 회원가입 불가
+    if (!idck) {
+      alert('아이디 중복확인을 해주세요.');
+      return;
+    }
+
     try {
       const data = {
         user_id: id,
@@ -33,8 +32,6 @@ const Join = ({csrfToken}) => {
         user_gender: gender,
         user_number: number
       };
-      // console.log('전송할 데이터:', data)
-      // console.log('CSRF 토큰:', csrfToken)
 
       const res = await instance.post('/join_user', data);
       if (res.data.message === 'success') {
@@ -50,14 +47,12 @@ const Join = ({csrfToken}) => {
   }
 
   /** 중복확인 체크 함수 (아이디) */
-  const idcheck = async (e) => {
-    // console.log(id)
+  const idcheck = async () => {
     if (id.length > 0) {
       setIdbutton(false)
       const data = {
         user_id : id
       }
-      
       const res = await instance.post('/idcheck', data)
       if (res.data.message === '불가능') { 
         setIdck(false)
@@ -74,7 +69,7 @@ const Join = ({csrfToken}) => {
           <Link to='/'>메인</Link>
           <div className="">
             아이디<br /><input type="text" autoFocus placeholder="아이디" onChange={(e) => { setId(e.target.value) }} />
-            <button type='button' onClick={() => {idcheck(id)}}>중복확인</button>
+            <button type='button' onClick={idcheck}>중복확인</button>
             {idbutton ? <span></span> : idck ? <span style={{color:'blue'}}>사용가능</span> : <span style={{color:'red'}}>불가능</span>}
             <br />
             <div className="">

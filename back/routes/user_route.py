@@ -28,11 +28,11 @@ def check_password(password: str, hashed: str) -> bool:
         hashed = hashed.encode('utf-8')
     return bcrypt.checkpw(salted_password.encode('utf-8'), hashed)
 
-# 임시
-@router.get('/')
-async def main() :
-    print('테스트')
-    return ''
+# # 임시
+# @router.get('/')
+# async def main() :
+#     print('테스트')
+#     return ''
 
 # 로그인
 @router.post("/login_user")
@@ -127,3 +127,8 @@ async def logout(req: Request):
     req.session.pop('user_id', None)
     req.session.pop('user_idx', None)
     return JSONResponse(content={'message': '로그아웃 성공'}, status_code=200)
+
+@router.get('/tt')
+async def tt(req: Request):
+    print('tt')
+    return

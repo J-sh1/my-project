@@ -44,4 +44,4 @@ def save_news_to_db(articles):
             except Exception as e:
                 # 다른 오류 발생 시 처리
                 # print(f"DB 저장 중 오류 발생: {e}")
-                db.rollback()  # 오류 발생 시 트랜잭션 롤백
+                db.rollback()  # 오류 발생 시 롤백
