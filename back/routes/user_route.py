@@ -7,6 +7,8 @@ import bcrypt
 from dotenv import load_dotenv
 import os
 from starlette.responses import JSONResponse
+from fastapi_jwt_auth import AuthJWT
+from pydantic import BaseModel
 
 load_dotenv()
 
@@ -14,30 +16,32 @@ router = APIRouter()
 
 SECRET_SERVER_SALT = os.getenv('SERVER_PASSWORD')
 
+# JWT 설정 클래스
+class Settings(BaseModel):
+    authjwt_secret_key: str = "your_jwt_secret_key"
+
+@AuthJWT.load_config
+def get_config():
+    return Settings()
+
 # 비밀번호 해싱 함수
 def hash_password(password: str) -> str:
-    salted_password = password + SECRET_SERVER_SALT  # 서버 측 솔트 추가
-    salt = bcrypt.gensalt()  # 솔트 생성
-    hashed = bcrypt.hashpw(salted_password.encode('utf-8'), salt)  # 비밀번호 해싱
+    salted_password = password + SECRET_SERVER_SALT
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(salted_password.encode('utf-8'), salt)
     return hashed.decode('utf-8')
 
 # 비밀번호 검증 함수
 def check_password(password: str, hashed: str) -> bool:
-    salted_password = password + SECRET_SERVER_SALT  # 서버 측 솔트 추가
+    salted_password = password + SECRET_SERVER_SALT
     if isinstance(hashed, str):
         hashed = hashed.encode('utf-8')
     return bcrypt.checkpw(salted_password.encode('utf-8'), hashed)
 
-# # 임시
-# @router.get('/')
-# async def main() :
-#     print('테스트')
-#     return ''
-
 # 로그인
 @router.post("/login_user")
-async def login(req: Request):
-    data = await req.json()  # JSON 데이터 파싱
+async def login(req: Request, Authorize: AuthJWT = Depends()):
+    data = await req.json()
     user_id = data.get('user_id')
     user_pw = data.get('user_pw')
 
@@ -45,16 +49,19 @@ async def login(req: Request):
 
     with get_db_cursor() as (db, cursor):
         try:
-            # 사용자 ID로 비밀번호 해시 검색
             sql = "SELECT USER_PW, USER_IDX FROM USER_INFO WHERE USER_ID = %s"
             cursor.execute(sql, (user_id,))
             result = cursor.fetchone()
 
             if result and check_password(user_pw, result[0]):
-                # 세션 설정 (쿠키 기반 세션 처리)
+                # JWT 생성
+                access_token = Authorize.create_access_token(subject=user_id)
+                
+                # 세션에 user_id 저장
                 req.session['user_id'] = user_id
                 req.session['user_idx'] = result[1]
-                return JSONResponse(content={'message': '로그인 성공'}, status_code=200)
+
+                return JSONResponse(content={'message': '로그인 성공', 'access_token': access_token}, status_code=200)
             else:
                 raise HTTPException(status_code=401, detail="로그인 실패")
 
@@ -62,39 +69,8 @@ async def login(req: Request):
             print(f"[로그인 요청] 오류 발생: {str(e)}")
             raise HTTPException(status_code=400, detail=str(e))
 
-# 회원가입
-@router.post("/join_user")
-async def join_user(req: Request):
-    data = await req.json()  # JSON 데이터 파싱
-    user_id = data.get('user_id')
-    user_pw = hash_password(data.get('user_pw'))  # 비밀번호 해싱
-    user_name = data.get('user_name')
-    user_gender = data.get('user_gender')
-    user_number = data.get('user_number')
-    user_idx = str(uuid.uuid4())
 
-    print(f"Parsed data: {user_id}, {user_pw}, {user_name}, {user_gender}, {user_number}")
-
-    if not all([user_id, user_pw, user_name, user_gender, user_number]):
-        raise HTTPException(status_code=400, detail="필수 정보 누락")
-
-    with get_db_cursor() as (db, cursor):
-        try:
-            sql = """
-            INSERT INTO USER_INFO 
-            (USER_ID, USER_PW, USER_NAME, USER_GEN, USER_NUMBER, USER_IDX)
-            VALUES(%s, %s, %s, %s, %s, %s)
-            """
-            cursor.execute(sql, (user_id, user_pw, user_name, user_gender, user_number, user_idx))
-            db.commit()
-            return JSONResponse(content={'message': 'success'}, status_code=201)
-
-        except Exception as e:
-            db.rollback()
-            print(f"Error: {str(e)}")
-            raise HTTPException(status_code = 400, detail = str(e))
-
-# 아이디 중복 확인
+# routes/user_route.py 파일에 있는 idcheck 라우트
 @router.post('/idcheck')
 async def idcheck(req: Request):
     data = await req.json()
@@ -107,7 +83,6 @@ async def idcheck(req: Request):
             FROM USER_INFO
             WHERE USER_ID = %s
             """
-            
             cursor.execute(sql, (user_id,))
             result = cursor.fetchone()
             
@@ -128,7 +103,11 @@ async def logout(req: Request):
     req.session.pop('user_idx', None)
     return JSONResponse(content={'message': '로그아웃 성공'}, status_code=200)
 
-@router.get('/tt')
-async def tt(req: Request):
-    print('tt')
-    return
+# 세션확인
+@router.get('/check-session')
+async def check_session(req: Request):
+    user_id = req.session.get('user_id')  # 세션에서 user_id를 확인
+    if user_id:
+        return JSONResponse(content={'isLoggedIn': True})
+    else:
+        return JSONResponse(content={'isLoggedIn': False})
