@@ -95,7 +95,6 @@ async def idcheck(req: Request):
         except Exception as e:
             raise HTTPException(status_code=400, detail=str(e))
 
-
 # 로그아웃
 @router.post("/logout")
 async def logout(req: Request):
