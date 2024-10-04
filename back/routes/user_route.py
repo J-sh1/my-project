@@ -1,14 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi.responses import RedirectResponse
+from fastapi_jwt_auth import AuthJWT
 from sqlalchemy.orm import Session
 from config.db import get_db_cursor
 from config.session import SessionConfig
-import uuid
-import bcrypt
+from starlette.responses import JSONResponse
+from pydantic import BaseModel
 from dotenv import load_dotenv
 import os
-from starlette.responses import JSONResponse
-from fastapi_jwt_auth import AuthJWT
-from pydantic import BaseModel
+import uuid
+import bcrypt
+import requests
 
 load_dotenv()
 
@@ -70,6 +72,58 @@ async def login(req: Request, Authorize: AuthJWT = Depends()):
             raise HTTPException(status_code=400, detail=str(e))
 
 
+# Kakao OAuth 설정
+KAKAO_CLIENT_ID = os.getenv('KAKAO_KEY')
+KAKAO_REDIRECT_URI = "http://localhost:5000/kakaologin"
+KAKAO_AUTH_URL = f"https://kauth.kakao.com/oauth/authorize?client_id={KAKAO_CLIENT_ID}&redirect_uri={KAKAO_REDIRECT_URI}&response_type=code"
+
+# 카카오 로그인 라우트
+@router.get("/kakao/login")
+def kakao_login():
+    return RedirectResponse(KAKAO_AUTH_URL)
+
+# 카카오 인증 콜백 라우트
+@router.get("/kakao/callback")
+def kakao_callback(request: Request):
+    code = request.query_params.get('code')
+    if not code:
+        raise HTTPException(status_code=400, detail="인증 실패")
+
+    token_url = "https://kauth.kakao.com/oauth/token"
+    token_data = {
+        "grant_type": "authorization_code",
+        "client_id": KAKAO_CLIENT_ID,
+        "redirect_uri": KAKAO_REDIRECT_URI,
+        "code": code,
+    }
+
+    # 카카오로부터 토큰 받기
+    token_response = requests.post(token_url, data=token_data)
+    token_json = token_response.json()
+    access_token = token_json.get("access_token")
+
+    if not access_token:
+        raise HTTPException(status_code=400, detail="토큰 발급 실패")
+
+    # 사용자 정보 받기
+    user_info_url = "https://kapi.kakao.com/v2/user/me"
+    user_info_response = requests.get(user_info_url, headers={"Authorization": f"Bearer {access_token}"})
+    user_info = user_info_response.json()
+
+    if not user_info.get("id"):
+        raise HTTPException(status_code=400, detail="사용자 정보 조회 실패")
+
+    # 카카오 사용자 정보로 로그인 처리 (DB 연동 등 추가)
+    kakao_id = user_info.get("id")
+    kakao_email = user_info.get("kakao_account", {}).get("email")
+
+    # 로그인 로직 추가 (DB에 사용자 정보 저장, 세션 설정, JWT 발급 등)
+    # 예: req.session['user_id'] = kakao_id
+    
+    return {"message": "카카오 로그인 성공", "kakao_id": kakao_id, "email": kakao_email}
+
+
+
 # routes/user_route.py 파일에 있는 idcheck 라우트
 @router.post('/idcheck')
 async def idcheck(req: Request):
@@ -110,3 +164,4 @@ async def check_session(req: Request):
         return JSONResponse(content={'isLoggedIn': True})
     else:
         return JSONResponse(content={'isLoggedIn': False})
+    

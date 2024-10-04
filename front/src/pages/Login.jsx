@@ -28,6 +28,12 @@ const Login = ({csrfToken}) => {
     }
   }
 
+  const Login = () => {
+    const kakaoLogin = () => {
+      window.location.href = 'http://localhost:5000/kakao/login';  // 백엔드에서 설정한 카카오 로그인 엔드포인트로 이동
+    }
+  }
+
   useEffect(() => {
     setIdck(id.length > 0)  
     setPwck(pw.length > 0)  
@@ -65,7 +71,12 @@ const Login = ({csrfToken}) => {
         <button type="button">회원가입</button>
       </Link>
       <br/>
-      <img src="https://developers.kakao.com/tool/resource/static/img/button/login/full/ko/kakao_login_medium_narrow.png" alt="" />
+      <img 
+        src="https://developers.kakao.com/tool/resource/static/img/button/login/full/ko/kakao_login_medium_narrow.png" 
+        alt="카카오 로그인" 
+        onClick={kakaoLogin} 
+        style={{ cursor: 'pointer' }}
+      />
     </div>
   )
 }
